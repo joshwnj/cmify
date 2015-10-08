@@ -1,0 +1,26 @@
+{
+  "name": "cmify",
+  "version": "1.0.0",
+  "description": "CSS Modules, browserify style",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "css",
+    "modules",
+    "browserify"
+  ],
+  "author": "joshwnj",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^1.4.2",
+    "css-modules-require-hook": "^1.0.10",
+    "glob": "^5.0.15",
+    "lodash.identity": "^3.0.0",
+    "postcss": "^4.0.0",
+    "postcss-modules-extract-imports": "0.0.5",
+    "postcss-modules-local-by-default": "0.0.12",
+    "postcss-modules-scope": "0.0.8"
+  }
+}
