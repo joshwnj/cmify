@@ -1,6 +1,8 @@
+var fresh = require('fresh-require')
 var fs = require('fs')
 var path = require('path')
 var postcss = require('postcss')
+var jss = require('jss')
 
 var ExtractImports = require('postcss-modules-extract-imports');
 var LocalByDefault = require('postcss-modules-local-by-default');
@@ -111,6 +113,47 @@ Loader.prototype.processCss = function (f, from, trace) {
   return tokens
 }
 
+Loader.prototype.processJss = function (f, from, trace) {
+  var filename = require.resolve(f)
+  var raw = fresh(filename, require)
+console.log('raw', raw)
+  var sheet = jss.create()
+
+  css = jss.createStyleSheet(raw, { named: false }).toString()
+
+  var rootRel = this.relativeToRoot(filename)
+
+  // if this module is depended on by another, increase its counter
+  // (so that it is rendered earlier in the generated css bundle)
+  if (!trace) {
+    this._initDepCount(rootRel)
+  }
+  else {
+    this._incDepCount(rootRel)
+  }
+
+  trace = trace || this._importNr++
+
+  var cssSrc = preProcess(css, filename);
+
+  var parser = new Parser({
+    fetch: this.processCss.bind(this),
+    filename: filename,
+    trace: trace
+  })
+
+  var lazyResult = postcss(plugins.concat(parser))
+    .process(cssSrc, { from: '/' + rootRel });
+
+  lazyResult.warnings().forEach(function (w) { console.warn(w.text) })
+
+  var tokens = lazyResult.root.tokens
+  this.setTokensForFile(tokens, filename)
+  this._sources[rootRel] = lazyResult.root.toString()
+
+  return tokens
+}
+
 // ----
 
 module.exports = function (dir, root) {
@@ -130,6 +173,10 @@ module.exports = function (dir, root) {
     switch (ext) {
     case '.css':
       tokens = root.processCss(f, dir)
+      break
+
+    case '.js':
+      tokens = root.processJss(f, dir)
       break
     }
 
