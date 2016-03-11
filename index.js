@@ -1,15 +1,14 @@
 'use strict'
 
 const resolve = require('resolve')
-const stringHash = require('string-hash')
 const fs = require('fs')
 const path = require('path')
 const postcss = require('postcss')
 
 const Values = require('postcss-modules-values')
-const ExtractImports = require('postcss-modules-extract-imports');
-const LocalByDefault = require('postcss-modules-local-by-default');
-const Scope = require('postcss-modules-scope');
+const ExtractImports = require('postcss-modules-extract-imports')
+const LocalByDefault = require('postcss-modules-local-by-default')
+const Scope = require('postcss-modules-scope')
 
 const Parser = require('postcss-modules-parser')
 const DepGraph = require('dependency-graph').DepGraph
@@ -23,16 +22,16 @@ let _depGraph
 Scope.generateScopedName = (function () {
   const orig = Scope.generateScopedName
   return function (exportedName, filename) {
-    const relFilename = path.relative(_baseDir, filename);
+    const relFilename = path.relative(_baseDir, filename)
     return orig(exportedName, relFilename)
   }
 })()
 
-const plugins = [];
+const plugins = []
 plugins.push(Values)
-plugins.push(LocalByDefault);
-plugins.push(ExtractImports);
-plugins.push(Scope);
+plugins.push(LocalByDefault)
+plugins.push(ExtractImports)
+plugins.push(Scope)
 
 function parseCss (css, filename, visited) {
   const parentId = filename
@@ -45,16 +44,16 @@ function parseCss (css, filename, visited) {
   const instance = postcss(plugins.concat(parser))
 
   function fetch (_to, from) {
-    const to = _to.replace(/^["']|["']$/g, '');
+    const to = _to.replace(/^["']|["']$/g, '')
     const filename = /\w/i.test(to[0])
           ? resolve(to)
-          : path.resolve(path.dirname(from), to);
+          : path.resolve(path.dirname(from), to)
 
-    const css = fs.readFileSync(filename, 'utf8');
+    const css = fs.readFileSync(filename, 'utf8')
     return subCmify(css, filename, parentId, visited)
   }
 
-  const lazyResult = instance.process(css, { from: filename });
+  const lazyResult = instance.process(css, { from: filename })
   lazyResult.warnings().forEach(function (w) { console.warn(w.text) })
 
   const tokens = lazyResult.root.tokens
@@ -151,5 +150,3 @@ cmify.setBaseDir = function (baseDir) {
 cmify.reset()
 
 module.exports = cmify
-
-

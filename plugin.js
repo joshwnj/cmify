@@ -42,16 +42,15 @@ function cmifyTransform (filename) {
 
       // make sure all dependencies are added to browserify's tree
       const output = tokens._deps.map(function (f) {
-        return 'require("' + f + '")';
-      });
+        return 'require("' + f + '")'
+      })
 
       // export the css module's tokens
       output.push(`/** last updated: ${Date.now()} **/`)
-      output.push('module.exports=' + JSON.stringify(tokens));
+      output.push('module.exports=' + JSON.stringify(tokens))
 
       this.push(output.join('\n'))
-    }
-    else {
+    } else {
       const ast = falafel(src, { ecmaVersion: 6 }, walk)
       this.push(ast.toString())
     }
@@ -101,7 +100,7 @@ function cmifyPlugin (b, opts) {
         entryRow = row
         return next(null)
       }
-      next(null, row);
+      next(null, row)
     }, function end (done) {
       // entry file always gets some code prepended to it
       let src = entryRow.source
@@ -112,9 +111,7 @@ function cmifyPlugin (b, opts) {
       // remove the old one before we add it again
       if (indexA !== -1 && indexB !== -1) {
         src = src.substr(0, indexA) + insert + src.substr(indexB + marker.length)
-      }
-      // first time
-      else {
+      } else {
         src = insert + src
       }
 

@@ -1,9 +1,10 @@
 {
   "name": "cmify",
   "version": "1.0.0",
-  "description": "node-css-modules ====",
+  "description": "A node-first approach to CSS Modules",
   "main": "index.js",
   "scripts": {
+    "lint": "standard",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -20,8 +21,10 @@
     "postcss-modules-scope": "^1.0.0",
     "postcss-modules-values": "^1.1.1",
     "resolve": "^1.1.7",
-    "string-hash": "^1.1.0",
     "string-to-stream": "^1.0.1",
     "through2": "^2.0.1"
+  },
+  "devDependencies": {
+    "standard": "^6.0.8"
   }
 }
