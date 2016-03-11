@@ -14,6 +14,8 @@ console.log('Generated classnames:', styles)
 console.log('Generated CSS:', cmify.getAllCss())
 ```
 
+For a complete example take a look at [cmify-example](https://github.com/joshwnj/cmify-example)
+
 Building for the browser
 ----
 
