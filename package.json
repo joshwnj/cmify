@@ -1,6 +1,6 @@
 {
   "name": "cmify",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A node-first approach to CSS Modules",
   "main": "index.js",
   "scripts": {
