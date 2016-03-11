@@ -1,7 +1,7 @@
 cmify (aka node-css-modules)
 ====
 
-A node-first approach to CSS Modules, so you can use CSS Modules on the server without any extra tools.
+A node-first approach to [CSS Modules](https://github.com/css-modules/css-modules), so you can use CSS Modules on the server without any extra tools.
 
 Example
 ----
@@ -34,6 +34,11 @@ npm install -D watchify browserify-hmr
 
 watchify -p browserify-hmr -p cmify/plugin src/index.js -o dist/index.js
 ```
+
+Thanks
+----
+
+to the [CSS Modules team](https://github.com/orgs/css-modules/people)
 
 License
 ----
