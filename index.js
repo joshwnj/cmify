@@ -104,7 +104,7 @@ function subCmify (css, filename, parentId, visited) {
 function cmify (css, filename, visited) {
   // initialize the first time we run
   if (!plugins.length) {
-    init()
+    cmify.init()
   }
 
   visited = visited || []
