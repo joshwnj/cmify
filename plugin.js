@@ -82,6 +82,13 @@ function cmifyTransform (filename) {
 }
 
 function cmifyPlugin (b, opts) {
+  opts = opts || {}
+
+  cmify.init({
+    cssBefore: opts.cssBefore,
+    cssAfter: opts.cssAfter
+  })
+
   // register a fake cmify module for the browser
   const cmStream = createCmStream()
   b.require(cmStream, { expose: 'cmify' })

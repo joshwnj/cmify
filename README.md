@@ -35,6 +35,22 @@ npm install -D watchify browserify-hmr
 watchify -p browserify-hmr -p cmify/plugin src/index.js -o dist/index.js
 ```
 
+How to add postcss plugins
+----
+
+You can add postcss plugins before or after the core CSS Modules transformation:
+
+```
+const cmify = require('cmify')
+
+cmify.init({
+  cssBefore: [ /* array of postcss plugins */ ]
+  cssAfter:  [ /* array of postcss plugins */ ]
+})
+```
+
+`cmify.init` is optional. It should only be called once, and needs to be called before the first `cmify.load`.
+
 Thanks
 ----
 

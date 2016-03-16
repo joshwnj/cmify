@@ -4,15 +4,23 @@ const resolve = require('resolve')
 const fs = require('fs')
 const path = require('path')
 const postcss = require('postcss')
+const Parser = require('postcss-modules-parser')
+const DepGraph = require('dependency-graph').DepGraph
+const caller = require('caller')
 
 const Values = require('postcss-modules-values')
 const ExtractImports = require('postcss-modules-extract-imports')
 const LocalByDefault = require('postcss-modules-local-by-default')
 const Scope = require('postcss-modules-scope')
 
-const Parser = require('postcss-modules-parser')
-const DepGraph = require('dependency-graph').DepGraph
-const caller = require('caller')
+const defaultPlugins = [
+  Values,
+  LocalByDefault,
+  ExtractImports,
+  Scope
+]
+
+let plugins = []
 
 let _baseDir
 let _resultCache
@@ -26,12 +34,6 @@ Scope.generateScopedName = (function () {
     return orig(exportedName, relFilename)
   }
 })()
-
-const plugins = []
-plugins.push(Values)
-plugins.push(LocalByDefault)
-plugins.push(ExtractImports)
-plugins.push(Scope)
 
 function parseCss (css, filename, visited) {
   const parentId = filename
@@ -100,6 +102,11 @@ function subCmify (css, filename, parentId, visited) {
 }
 
 function cmify (css, filename, visited) {
+  // initialize the first time we run
+  if (!plugins.length) {
+    init()
+  }
+
   visited = visited || []
 
   if (!filename) { filename = caller() }
@@ -144,6 +151,15 @@ cmify.reset = function reset () {
 
 cmify.setBaseDir = function (baseDir) {
   _baseDir = baseDir
+}
+
+cmify.init = function init (opts) {
+  opts = opts || {}
+
+  plugins = []
+    .concat(opts.cssBefore || [])
+    .concat(defaultPlugins)
+    .concat(opts.cssAfter || [])
 }
 
 // reset once to begin
