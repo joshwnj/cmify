@@ -1,0 +1,8 @@
+.sky {
+  background: blue;
+}
+
+.grass {
+  composes: plants from "./things.css";
+  background: green;
+}
