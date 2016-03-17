@@ -14,7 +14,7 @@ module.exports = cmify
 `)
 
   // give the stream a filename so browserify can treat it as a real module
-  cmStream.file = require.resolve('cmify')
+  cmStream.file = __dirname
 
   return cmStream
 }
