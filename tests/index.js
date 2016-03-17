@@ -11,8 +11,6 @@ fs.readdir(casesDir, function (err, dirs) {
     const fullDir = path.join(casesDir, dir)
     tape(`Case: ${dir}`, function (t) {
       const result = require(fullDir)
-      console.log(result)
-
       const expected = require(path.join(fullDir, 'expected.js'))
 
       t.deepEqual(result, expected, 'Tokens exported as expected')

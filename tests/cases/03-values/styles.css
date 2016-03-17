@@ -1,0 +1,13 @@
+@value money 100%;
+@value money as cashMoney from "./things.css";
+
+.sky {
+  background: blue;
+  content: money;
+}
+
+.grass {
+  composes: plants from "./things.css";
+  content: cashMoney;
+  background: green;
+}

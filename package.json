@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "standard",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tape tests/index.js | tap-diff"
   },
   "keywords": [
     "css-modules",
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "standard": "^6.0.8",
+    "tap-diff": "^0.1.1",
     "tape": "^4.5.1"
   }
 }
