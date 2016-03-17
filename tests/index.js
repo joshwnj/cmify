@@ -5,6 +5,8 @@ const tape = require('tape')
 const casesDir = path.join(__dirname, 'cases')
 
 fs.readdir(casesDir, function (err, dirs) {
+  if (err) { throw err }
+
   dirs.forEach(function (dir) {
     const fullDir = path.join(casesDir, dir)
     tape(`Case: ${dir}`, function (t) {
@@ -12,17 +14,9 @@ fs.readdir(casesDir, function (err, dirs) {
       console.log(result)
 
       const expected = require(path.join(fullDir, 'expected.js'))
-      
+
       t.deepEqual(result, expected, 'Tokens exported as expected')
       t.end()
     })
   })
-
-  // const result = require('./cases/01-simple/')
-  // console.log(result)
-
-  // const expected = require('./cases/01-simple/expected.js')
-
-  // t.deepEqual(result.styles, expected, 'Tokens exported as expected')
-  // t.end()
 })
