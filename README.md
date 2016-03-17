@@ -1,7 +1,7 @@
 cmify (aka node-css-modules)
 ====
 
-[![Build Status](https://travis-ci.org/joshwnj/cmify/master.svg?style=flat-square)](https://travis-ci.org/joshwnj/cmify)
+[![Build Status](https://api.travis-ci.org/joshwnj/cmify.svg)](https://travis-ci.org/joshwnj/cmify)
 
 A node-first approach to [CSS Modules](https://github.com/css-modules/css-modules), so you can use CSS Modules on the server without any extra tools.
 
