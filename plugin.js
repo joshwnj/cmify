@@ -7,16 +7,34 @@ const str = require('string-to-stream')
 
 function createCmStream () {
   // fake module
-  const cmStream = str(`
-function cmify () {}
-cmify.getAllCss = function () { return window.__cmify_allCss }
-module.exports = cmify
-`)
+  const cmStream = str('module.exports=null')
 
   // give the stream a filename so browserify can treat it as a real module
   cmStream.file = __dirname
+  cmStream.id = 'cmify'
 
   return cmStream
+}
+
+function createCmifySource () {
+  return `
+function cmify () {}
+cmify.getAllCss = function () { return ${JSON.stringify(cmify.getAllCss())} }
+module.exports = cmify`
+}
+
+function createCssModuleSource (filename) {
+  const tokens = cmify.load(filename)
+
+  // make sure all dependencies are added to browserify's tree
+  const output = tokens._deps.map(function (f) {
+    return 'require("' + f + '")'
+  })
+
+  // export the css module's tokens
+  output.push(`/** last updated: ${Date.now()} **/`)
+  output.push(`module.exports=${JSON.stringify(tokens)}`)
+  return output.join('\n')
 }
 
 function cmifyTransform (filename) {
@@ -38,18 +56,7 @@ function cmifyTransform (filename) {
 
     // handle css files
     if (/\.css$/.test(filename)) {
-      const tokens = cmify.load(filename)
-
-      // make sure all dependencies are added to browserify's tree
-      const output = tokens._deps.map(function (f) {
-        return 'require("' + f + '")'
-      })
-
-      // export the css module's tokens
-      output.push(`/** last updated: ${Date.now()} **/`)
-      output.push('module.exports=' + JSON.stringify(tokens))
-
-      this.push(output.join('\n'))
+      this.push(createCssModuleSource(filename))
     } else {
       const ast = falafel(src, { ecmaVersion: 6 }, walk)
       this.push(ast.toString())
@@ -91,7 +98,7 @@ function cmifyPlugin (b, opts) {
 
   // register a fake cmify module for the browser
   const cmStream = createCmStream()
-  b.require(cmStream, { expose: 'cmify' })
+  b.require(cmStream, { expose: cmStream.id })
 
   b.transform(cmifyTransform)
 
@@ -99,31 +106,28 @@ function cmifyPlugin (b, opts) {
   reset()
 
   function reset () {
-    const marker = '/**CMIFY**/'
-    let entryRow = null
-
+    // add the cmify module
     b.pipeline.get('deps').push(through.obj(function write (row, enc, next) {
-      if (!entryRow && row.deps && row.deps.cmify) {
-        entryRow = row
-        return next(null)
+      if (row.id === cmStream.id) {
+        next(null)
       }
-      next(null, row)
+      else {
+        // css modules need to be regenerated at this point
+        // (so that imported @value updates are carried through hmr)
+        if (/\.css$/.test(row.id)) {
+          cmify.invalidateById(row.id)
+          row.source = createCssModuleSource(row.id)
+        }
+        next(null, row)
+      }
     }, function end (done) {
-      // entry file always gets some code prepended to it
-      let src = entryRow.source
-      const indexA = src.indexOf(marker)
-      const indexB = src.indexOf(marker, indexA + 1)
-      const insert = marker + `;\nwindow.__cmify_allCss = ${JSON.stringify(cmify.getAllCss())};` + marker
-
-      // remove the old one before we add it again
-      if (indexA !== -1 && indexB !== -1) {
-        src = src.substr(0, indexA) + insert + src.substr(indexB + marker.length)
-      } else {
-        src = insert + src
+      const row = {
+        id: cmStream.id,
+        source: createCmifySource(),
+        deps: {},
+        file: cmStream.file
       }
-
-      entryRow.source = src
-      this.push(entryRow)
+      this.push(row)
 
       done()
     }))
