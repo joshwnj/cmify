@@ -110,8 +110,7 @@ function cmifyPlugin (b, opts) {
     b.pipeline.get('deps').push(through.obj(function write (row, enc, next) {
       if (row.id === cmStream.id) {
         next(null)
-      }
-      else {
+      } else {
         // css modules need to be regenerated at this point
         // (so that imported @value updates are carried through hmr)
         if (/\.css$/.test(row.id)) {
