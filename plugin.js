@@ -56,7 +56,12 @@ function cmifyTransform (filename) {
 
     // handle css files
     if (/\.css$/.test(filename)) {
-      this.push(createCssModuleSource(filename))
+      try {
+        this.push(createCssModuleSource(filename))
+      }
+      catch (err) {
+        this.emit("error", err);
+      }
     } else {
       const ast = falafel(src, { ecmaVersion: 6 }, walk)
       this.push(ast.toString())
@@ -115,7 +120,12 @@ function cmifyPlugin (b, opts) {
         // (so that imported @value updates are carried through hmr)
         if (/\.css$/.test(row.id)) {
           cmify.invalidateById(row.id)
-          row.source = createCssModuleSource(row.id)
+          try {
+            row.source = createCssModuleSource(row.id)
+          }
+          catch (err) {
+            this.emit("error", err);
+          }
         }
         next(null, row)
       }
