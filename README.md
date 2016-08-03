@@ -37,6 +37,16 @@ npm install -D watchify browserify-hmr
 watchify -p browserify-hmr -p cmify/plugin src/index.js -o dist/index.js
 ```
 
+Saving the generated CSS to a file:
+
+```
+npm install -D browserify
+
+browserify -p [cmify/plugin -o lib/out.css] src/index.js
+```
+
+_Note: `-o` is an alias for `--outfile`._
+
 How to add postcss plugins
 ----
 
