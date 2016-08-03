@@ -26,7 +26,7 @@ With browserify:
 ```
 npm install -D browserify
 
-browserify -p cmify/plugin src/index.js
+browserify -p cmify/plugin -t cmify/transform src/index.js
 ```
 
 With hot module reloading:
@@ -34,8 +34,18 @@ With hot module reloading:
 ```
 npm install -D watchify browserify-hmr
 
-watchify -p browserify-hmr -p cmify/plugin src/index.js -o dist/index.js
+watchify -p browserify-hmr -p cmify/plugin -t cmify/transform src/index.js -o dist/index.js
 ```
+
+With babelify:
+
+```
+npm install -D babelify
+
+browserify -p cmify/plugin -t babelify -t cmify/transform src/index.js
+```
+
+_Note: Order of transformations is important; we must babelify before cmify._
 
 How to add postcss plugins
 ----
