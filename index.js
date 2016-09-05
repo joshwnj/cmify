@@ -48,7 +48,7 @@ function parseCss (css, filename, visited) {
   function fetch (_to, from) {
     const to = _to.replace(/^["']|["']$/g, '')
     const filename = /\w/i.test(to[0])
-          ? resolve(to)
+          ? resolve.sync(to)
           : path.resolve(path.dirname(from), to)
 
     const css = fs.readFileSync(filename, 'utf8')
