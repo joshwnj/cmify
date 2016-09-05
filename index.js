@@ -48,7 +48,7 @@ function parseCss (css, filename, visited) {
   function fetch (_to, from) {
     const to = _to.replace(/^["']|["']$/g, '')
     const filename = /\w/i.test(to[0])
-          ? resolve.sync(to)
+          ? resolve.sync(to, {packageFilter: mapStyleEntry})
           : path.resolve(path.dirname(from), to)
 
     const css = fs.readFileSync(filename, 'utf8')
@@ -64,6 +64,11 @@ function parseCss (css, filename, visited) {
     tokens: tokens,
     css: lazyResult.root.toString()
   }
+}
+
+function mapStyleEntry (pkg) {
+  if (!pkg.main && pkg.style) { pkg.main = pkg.style }
+  return pkg
 }
 
 function getResultById (id) {
