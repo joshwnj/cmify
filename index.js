@@ -26,14 +26,17 @@ let _baseDir
 let _resultCache
 let _depGraph
 
-// only use the relevant part of the filename
-Scope.generateScopedName = (function () {
-  const orig = Scope.generateScopedName
-  return function (exportedName, filename) {
-    const relFilename = path.relative(_baseDir, filename)
-    return orig(exportedName, relFilename)
-  }
-})()
+
+function generateScopeName() {
+  // only use the relevant part of the filename
+  Scope.generateScopedName = (function () {
+    const orig = Scope.generateScopedName
+    return function (exportedName, filename) {
+      const relFilename = path.relative(_baseDir, filename)
+      return orig(exportedName, relFilename)
+    }
+  })()
+}
 
 function parseCss (css, filename, visited) {
   const parentId = filename
@@ -160,6 +163,15 @@ cmify.setBaseDir = function (baseDir) {
 
 cmify.init = function init (opts) {
   opts = opts || {}
+
+  if (opts.generateScopedName instanceof Function) {
+    Scope.generateScopedName = (function () {
+      const orig = Scope.generateScopedName
+      return opts.generateScopedName(orig)
+    })()
+  } else {
+    generateScopedName()
+  }
 
   plugins = []
     .concat(opts.cssBefore || [])
