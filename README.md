@@ -67,7 +67,7 @@ cmify.init({
 Thanks
 ----
 
-to the [CSS Modules team](https://github.com/orgs/css-modules/people)
+to the [CSS Modules team](https://github.com/orgs/css-modules/people) and [contributors](https://github.com/joshwnj/cmify/graphs/contributors)
 
 License
 ----
