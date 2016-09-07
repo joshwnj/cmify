@@ -32,5 +32,16 @@
     "standard": "^8.0.0",
     "tap-diff": "^0.1.1",
     "tape": "^4.5.1"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshwnj/cmify.git"
+  },
+  "bugs": {
+    "url": "https://github.com/joshwnj/cmify/issues"
+  },
+  "homepage": "https://github.com/joshwnj/cmify#readme"
 }
