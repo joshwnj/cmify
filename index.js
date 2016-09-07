@@ -26,14 +26,17 @@ let _baseDir
 let _resultCache
 let _depGraph
 
-// only use the relevant part of the filename
-Scope.generateScopedName = (function () {
-  const orig = Scope.generateScopedName
-  return function (exportedName, filename) {
-    const relFilename = path.relative(_baseDir, filename)
-    return orig(exportedName, relFilename)
-  }
-})()
+
+function generateScopedName() {
+  // only use the relevant part of the filename
+  Scope.generateScopedName = (function () {
+    const orig = Scope.generateScopedName
+    return function (exportedName, filename) {
+      const relFilename = path.relative(_baseDir, filename)
+      return orig(exportedName, relFilename)
+    }
+  })()
+}
 
 function parseCss (css, filename, visited) {
   const parentId = filename
@@ -48,7 +51,7 @@ function parseCss (css, filename, visited) {
   function fetch (_to, from) {
     const to = _to.replace(/^["']|["']$/g, '')
     const filename = /\w/i.test(to[0])
-          ? resolve(to)
+          ? resolve.sync(to, {packageFilter: mapStyleEntry})
           : path.resolve(path.dirname(from), to)
 
     const css = fs.readFileSync(filename, 'utf8')
@@ -64,6 +67,11 @@ function parseCss (css, filename, visited) {
     tokens: tokens,
     css: lazyResult.root.toString()
   }
+}
+
+function mapStyleEntry (pkg) {
+  if (!pkg.main && pkg.style) { pkg.main = pkg.style }
+  return pkg
 }
 
 function getResultById (id) {
@@ -155,6 +163,15 @@ cmify.setBaseDir = function (baseDir) {
 
 cmify.init = function init (opts) {
   opts = opts || {}
+
+  if (opts.generateScopedName instanceof Function) {
+    Scope.generateScopedName = (function () {
+      const orig = Scope.generateScopedName
+      return opts.generateScopedName(orig)
+    })()
+  } else {
+    generateScopedName()
+  }
 
   plugins = []
     .concat(opts.cssBefore || [])

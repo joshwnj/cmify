@@ -56,8 +56,9 @@ You can add postcss plugins before or after the core CSS Modules transformation:
 const cmify = require('cmify')
 
 cmify.init({
-  cssBefore: [ /* array of postcss plugins */ ]
-  cssAfter:  [ /* array of postcss plugins */ ]
+  cssBefore: [ /* array of postcss plugins */ ],
+  cssAfter:  [ /* array of postcss plugins */ ],
+  generateScopedName: (originalFn) => function (exportedName, filename) => String
 })
 ```
 
