@@ -1,0 +1,8 @@
+.sky {
+  background: blue;
+}
+
+.grass {
+  composes: coolness from "cool-styles";
+  background: green;
+}
